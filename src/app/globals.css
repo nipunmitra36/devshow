@@ -1,0 +1,235 @@
+@import "tailwindcss";
+
+/* `light:` variant, e.g. `hidden light:block`. */
+@custom-variant light (&:where([data-theme="light"], [data-theme="light"] *));
+
+/*
+ * Theme tokens. Night (dark) is the default; `data-theme="light"` on <html> switches to day.
+ * Any subtree can pin a theme with its own data-theme attribute (the share card always renders dark).
+ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #050607;
+  --surface: rgb(255 255 255 / 0.025);
+  --surface-strong: rgb(255 255 255 / 0.05);
+  --line: rgb(255 255 255 / 0.08);
+  --line-strong: rgb(255 255 255 / 0.14);
+  --fg: #f0f3f6;
+  --fg-muted: #9ba3ad;
+  --fg-subtle: #6b7380;
+  --tint: #ffffff; /* overlays: white on night, black on day */
+  --popover: #0d1117;
+  --elevated: #0a0d10;
+
+  --accent: #3fdc6a;
+  --accent-hover: #5be884;
+  --accent-strong: #2ea043;
+  --danger: #f47067;
+  --warning: #e3b341;
+
+  /* Contribution intensity ramp: one hue, dark -> bright on the night surface. */
+  --heat-0: #161b22;
+  --heat-1: #0e4429;
+  --heat-2: #006d32;
+  --heat-3: #26a641;
+  --heat-4: #4ae168;
+
+  --glass-from: rgb(255 255 255 / 0.04);
+  --glass-to: rgb(255 255 255 / 0.015);
+  --glow: rgb(46 160 67 / 0.16);
+  --grid: rgb(255 255 255 / 0.03);
+  --heading-from: #ffffff;
+  --heading-to: #a7b0ba;
+
+  /* Premium card surface: opaque fill + gradient hairline border + top highlight. */
+  --card-from: #0e1114;
+  --card-to: #090b0d;
+  --card-border-from: rgb(255 255 255 / 0.15);
+  --card-border-to: rgb(255 255 255 / 0.04);
+  --card-highlight: rgb(255 255 255 / 0.07);
+  --card-shadow: rgb(0 0 0 / 0.65);
+  --card-accent-glow: rgb(63 220 106 / 0.13);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --canvas: #f6f8fa;
+  --surface: rgb(0 0 0 / 0.02);
+  --surface-strong: rgb(0 0 0 / 0.035);
+  --line: rgb(31 35 40 / 0.1);
+  --line-strong: rgb(31 35 40 / 0.18);
+  --fg: #1f2328;
+  --fg-muted: #59636e;
+  --fg-subtle: #6e7781;
+  --tint: #000000;
+  --popover: #ffffff;
+  --elevated: #ffffff;
+
+  --accent: #1a7f37;
+  --accent-hover: #116329;
+  --accent-strong: #1a7f37;
+  --danger: #cf222e;
+  --warning: #9a6700;
+
+  /* Same ramp for day: light -> dark on the light surface. */
+  --heat-0: #ebedf0;
+  --heat-1: #9be9a8;
+  --heat-2: #40c463;
+  --heat-3: #30a14e;
+  --heat-4: #216e39;
+
+  --glass-from: rgb(255 255 255 / 0.95);
+  --glass-to: rgb(255 255 255 / 0.75);
+  --glow: rgb(46 160 67 / 0.14);
+  --grid: rgb(31 35 40 / 0.045);
+  --heading-from: #1f2328;
+  --heading-to: #59636e;
+
+  --card-from: #ffffff;
+  --card-to: #fbfcfd;
+  --card-border-from: rgb(31 35 40 / 0.14);
+  --card-border-to: rgb(31 35 40 / 0.07);
+  --card-highlight: rgb(255 255 255 / 1);
+  --card-shadow: rgb(31 35 40 / 0.1);
+  --card-accent-glow: rgb(46 160 67 / 0.1);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-tint: var(--tint);
+  --color-popover: var(--popover);
+  --color-elevated: var(--elevated);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-strong: var(--accent-strong);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+
+  --color-heat-0: var(--heat-0);
+  --color-heat-1: var(--heat-1);
+  --color-heat-2: var(--heat-2);
+  --color-heat-3: var(--heat-3);
+  --color-heat-4: var(--heat-4);
+}
+
+@theme {
+  --animate-fade-up: fade-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.45; }
+    50% { opacity: 0.9; }
+  }
+}
+
+/* Tailwind v4 dropped the pointer cursor on buttons; restore it so every action reads as clickable. */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  select:not(:disabled),
+  label:has(> input[type="radio"]:not(:disabled)),
+  label:has(> input[type="checkbox"]:not(:disabled)) {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+}
+
+body {
+  background: var(--canvas);
+  color: var(--fg);
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Cross-fade colors when the theme is switched (the class is removed right after). */
+html.theme-switching,
+html.theme-switching * {
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    fill 0.25s ease !important;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* Faint grid + green glow behind the page. */
+@utility bg-backdrop {
+  background-image:
+    radial-gradient(60rem 30rem at 50% -10rem, var(--glow), transparent 70%),
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: auto, 48px 48px, 48px 48px;
+  mask-image: linear-gradient(to bottom, black 0%, black 40%, transparent 90%);
+}
+
+@utility glass {
+  background: linear-gradient(180deg, var(--glass-from), var(--glass-to));
+  backdrop-filter: blur(12px);
+}
+
+/* Layered card: opaque gradient fill (padding-box) over a gradient hairline (border-box). */
+@utility card-premium {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(180deg, var(--card-from), var(--card-to)) padding-box,
+    linear-gradient(180deg, var(--card-border-from), var(--card-border-to)) border-box;
+  box-shadow:
+    inset 0 1px 0 0 var(--card-highlight),
+    0 1px 2px 0 color-mix(in srgb, var(--card-shadow) 40%, transparent),
+    0 18px 40px -24px var(--card-shadow);
+}
+
+/* Emphasized variant: green-tinted fill and a green hairline. */
+@utility card-premium-accent {
+  border: 1px solid transparent;
+  background:
+    radial-gradient(120% 90% at 0% 0%, var(--card-accent-glow), transparent 60%) padding-box,
+    linear-gradient(180deg, var(--card-from), var(--card-to)) padding-box,
+    linear-gradient(180deg, color-mix(in srgb, var(--accent) 55%, transparent), color-mix(in srgb, var(--accent) 10%, transparent)) border-box;
+  box-shadow:
+    inset 0 1px 0 0 var(--card-highlight),
+    0 1px 2px 0 color-mix(in srgb, var(--card-shadow) 40%, transparent),
+    0 18px 44px -22px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+@utility text-gradient {
+  background: linear-gradient(180deg, var(--heading-from) 30%, var(--heading-to));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--tint) 15%, transparent) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
